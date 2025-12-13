@@ -1,7 +1,100 @@
-<div class="intro">
-    <p>Hello world! I am currently a Solution Architect at <a href="https://www.cognizant.com" target="_blank">Cognizant</a> based in Teaneck, New Jersey, US. My work focuses on designing and implementing innovative technology solutions, with a special emphasis on AI-driven systems, IoT frameworks, and intelligent network security.</p>
-    
-    <p>I hold a Bachelor of Engineering degree in Information Technology from Dr. Bhim Rao Ambedkar University, Agra, India. Throughout my career spanning over two decades, I have worked with leading organizations including Tata Consultancy Services, CMT Limited, Texport Industries, and Coincap System and Services.</p>
-    
-    <p>My research interests include deep learning applications in healthcare monitoring, 5G network security using neural learning, and ethical AI in hyper-automation. I am an active member of the academic community, serving as a Senior Member of IEEE ComSoc, Professional Member of ACM, and Fellow of IETE (Institution of Electronics and Telecommunication Engineers).</p>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload PDF as Images</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f9fc;
+      padding: 20px;
+    }
+
+    .upload-box {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      max-width: 900px;
+      margin: auto;
+    }
+
+    input[type="file"] {
+      margin-bottom: 20px;
+    }
+
+    .images {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .images img {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="upload-box">
+    <h2>Upload PDF (Convert to Images)</h2>
+    <input type="file" id="pdfUpload" accept="application/pdf">
+
+    <div class="images" id="imagePreview"></div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById("pdfUpload");
+    const preview = document.getElementById("imagePreview");
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+    fileInput.addEventListener("change", async function () {
+      preview.innerHTML = "";
+
+      const file = this.files[0];
+      if (!file || file.type !== "application/pdf") return;
+
+      const fileReader = new FileReader();
+      fileReader.onload = async function () {
+        const typedarray = new Uint8Array(this.result);
+        const pdf = await pdfjsLib.getDocument(typedarray).promise;
+
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+          const page = await pdf.getPage(pageNum);
+          const viewport = page.getViewport({ scale: 2 });
+
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d");
+
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+
+          await page.render({
+            canvasContext: context,
+            viewport: viewport
+          }).promise;
+
+          const img = document.createElement("img");
+          img.src = canvas.toDataURL("image/png");
+          img.alt = `Page ${pageNum}`;
+
+          preview.appendChild(img);
+        }
+      };
+
+      fileReader.readAsArrayBuffer(file);
+    });
+  </script>
+
+</body>
+</html>
