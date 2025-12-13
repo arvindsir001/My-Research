@@ -2,99 +2,81 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Upload PDF as Images</title>
+  <title>Awards & Recognitions</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- PDF.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f7f9fc;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f6f8fb;
+      margin: 0;
       padding: 20px;
     }
 
-    .upload-box {
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-      max-width: 900px;
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .awards-container {
+      max-width: 1100px;
       margin: auto;
-    }
-
-    input[type="file"] {
-      margin-bottom: 20px;
-    }
-
-    .images {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
     }
 
-    .images img {
+    .award-card {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .award-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+    }
+
+    .award-card img {
       width: 100%;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      height: 220px;
+      object-fit: contain;
+      background: #fafafa;
+      border-bottom: 1px solid #eee;
+    }
+
+    .award-content {
+      padding: 16px;
+    }
+
+    .award-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .award-meta {
+      font-size: 0.9rem;
+      color: #555;
+      line-height: 1.5;
     }
   </style>
 </head>
 <body>
 
-  <div class="upload-box">
-    <h2>Upload PDF (Convert to Images)</h2>
-    <input type="file" id="pdfUpload" accept="application/pdf">
+  <h1>Awards & Recognitions</h1>
 
-    <div class="images" id="imagePreview"></div>
-  </div>
+  <div class="awards-container">
 
-  <script>
-    const fileInput = document.getElementById("pdfUpload");
-    const preview = document.getElementById("imagePreview");
-
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
-    fileInput.addEventListener("change", async function () {
-      preview.innerHTML = "";
-
-      const file = this.files[0];
-      if (!file || file.type !== "application/pdf") return;
-
-      const fileReader = new FileReader();
-      fileReader.onload = async function () {
-        const typedarray = new Uint8Array(this.result);
-        const pdf = await pdfjsLib.getDocument(typedarray).promise;
-
-        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-          const page = await pdf.getPage(pageNum);
-          const viewport = page.getViewport({ scale: 2 });
-
-          const canvas = document.createElement("canvas");
-          const context = canvas.getContext("2d");
-
-          canvas.width = viewport.width;
-          canvas.height = viewport.height;
-
-          await page.render({
-            canvasContext: context,
-            viewport: viewport
-          }).promise;
-
-          const img = document.createElement("img");
-          img.src = canvas.toDataURL("image/png");
-          img.alt = `Page ${pageNum}`;
-
-          preview.appendChild(img);
-        }
-      };
-
-      fileReader.readAsArrayBuffer(file);
-    });
-  </script>
-
-</body>
-</html>
+    <!-- Award 1 -->
+    <div class="award-card">
+      <img src="images/732_Certificate.jpg" alt="Certificate of Presenter at IEEE 7th International Conference on Computing,
+Communication and Automation (ICCCA)">
+      <div class="award-content">
+        <div class="award-title">
+          Best Paper Presentation – IEEE ICCCA 2025
+        </div>
+        <div class="award-meta">
+          IEEE 7th International Conferenc
